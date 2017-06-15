@@ -14,6 +14,9 @@ route.delete('/user/:id', user_controller.delete)
 route.post('/article', article_controller.createData)
 route.get('/article', article_controller.getAllData)
 route.get('/article/:id', article_controller.getOneData)
+route.get('/article/author/:author', article_controller.getByAuthor)
+route.get('/article/category/:category', article_controller.getByCategory)
+route.put('/article/:id', article_controller.updateData)
 route.delete('/article/:id', article_controller.removeData)
 
 module.exports = route

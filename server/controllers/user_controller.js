@@ -3,12 +3,11 @@ const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
 
 require('dotenv').config();
-const secret = process.env.SECRET_KEY;
-const salt = process.env.SALT;
+let secret = process.env.SECRET_KEY;
 
 module.exports = {
   register : function(req, res) {
-    let hash = bcrypt.hashSync(req.body.password, salt)
+    let hash = bcrypt.hashSync(req.body.password, 8)
     User.create({
       username : req.body.username,
       password : hash
@@ -19,10 +18,14 @@ module.exports = {
   login : function(req,res) {
     User.findOne({username : req.body.username}, (err, record) => {
       if(!err) {
-        if(bcrypt.compareSync(req.body.password, salt)){
+        if(bcrypt.compareSync(req.body.password, record.password)){
           let token = jwt.sign({username: record.username, id: record._id}, secret)
+          res.json(token)
+        }else {
+          res.send('password salah')
         }
       }
+      res.json({err})
     })
   },
   delete : function(req, res) {

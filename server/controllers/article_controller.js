@@ -27,7 +27,7 @@ module.exports = {
     })
   },//get by author
   getByCategory: function(req, res){
-    Article.find({author:req.params.author}, (err, records) => {
+    Article.find({category:req.params.category}, (err, records) => {
       err ? res.json({ err }) : res.json(records)
     })
   },//get by category
