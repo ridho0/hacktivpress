@@ -1,5 +1,6 @@
 const Article = require('../models/article')
-// ,
+const User = require('../models/user')
+
 module.exports = {
   createData : function(req, res){
     Article.create({
@@ -12,24 +13,41 @@ module.exports = {
     })
   },//create data
   getAllData : function(req, res){
-    Article.find({}, (err, records) => {
-      err ? res.json({ err }) : res.json(records)
-    })
+    Article.find({})
+      .populate('author','username')
+      .exec((err, records) => {
+        err ? res.json({ err }) : res.json(records)
+      })
   },//get all data
   getOneData : function(req, res){
-    Article.findById(req.params.id, (err, record) => {
-      err ? res.json({ err }) : res.json(record)
-    })
+    Article.findById(req.params.id)
+      .populate('author','username')
+      .exec((err, record) => {
+        err ? res.json({ err }) : res.json(record)
+      })
   },//get one data
   getByAuthor : function(req, res){
-    Article.find({author:req.params.author}, (err, records) => {
-      err ? res.json({ err }) : res.json(records)
+    User.findOne({username : req.params.author}, (err, record) => {
+      console.log(record._id);
+      if(!err){
+        Article.find({author: record._id})
+          .populate('author','username')
+          .exec((err, articles) => {
+            console.log('masuk');
+            console.log(articles);
+            !err ? res.json(articles) : res.json({ err })
+          })
+      }
+      console.log('disini');
+      res.json({ err })
     })
   },//get by author
   getByCategory: function(req, res){
-    Article.find({category:req.params.category}, (err, records) => {
-      err ? res.json({ err }) : res.json(records)
-    })
+    Article.find({category:req.params.category})
+      .populate('author','username')
+      .exec((err, records) => {
+        err ? res.json({ err }) : res.json(records)
+      })
   },//get by category
   updateData : function(req, res){
     Article.findById(req.params.id, (err, record) => {
